@@ -39,16 +39,24 @@ int main(int argc,char ** argv)
 		if(pid == 0)
 			break;
 	}
-
+		
 	if(pid > 0)
 	{
-
+		int countofchildproc = processnum;
+		pid_t wpid;
+		while(countofchildproc != 0 )
+		{
+			if((wpid = waitpid(-1,NULL,WNOHANG)) > 0 )
+			{
+				countofchildproc--;	
+			}
+		}
 	}else if(pid == 0)
 	{
 		if(st.st_size%processnum != 0 && i == processnum)
-			everynum = everynum + st.st_size%processnum;
+		everynum = everynum + st.st_size%processnum;
 		char strbuf[20];
-		sprintf(strbuf, "%s %s %d %d",argv[1],argv[2],i,everynum);
+		sprintf(strbuf, "%s %s %d %d %d",argv[1],argv[2],i,everynum,processnum);
 		execl("./mycp","mycp",strbuf,NULL);
 	}else
 	{
