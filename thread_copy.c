@@ -10,7 +10,6 @@
 
 typedef struct data
 {
-	pthread_t tid;
 	int nindex;
 	int dataamont;
 	int everyamont;
@@ -19,7 +18,20 @@ typedef struct data
 	char des[1024];
 }Info;
 
-
+void proc(int i)
+{
+   int rate=0;//进度率 表示进度走的百分比
+   char bar[102]={0};//初始化进度条大小 0-100应给101个 我们把最后一个设为空
+   const char *sta="-\\|/";看进度条是否卡顿还是在工作
+   while(rate<=100)
+   {
+	   printf("[%-100s],%d%%,[%c]\r",bar,rate,sta[rate%4]);
+	   //usleep(10000);//sleep()的休眠时间为秒  usleep()休眠时间为微秒
+	   bar[rate]='*';
+	   rate++;
+	   bar[rate]='\0';
+	 }
+}
 void * thread_jobs(void *arg)
 {
 	printf("%ld\n",pthread_self());
@@ -52,6 +64,7 @@ int main(int argc,char **argv)
 	int threadnum;
 	int dfd = 0;
 	struct stat st;
+	int arrtid[99] = {0};
 	stat(argv[1],&st);
 	if(argv[3] != 0)
 		threadnum = atoi(argv[3]);
@@ -87,9 +100,22 @@ int main(int argc,char **argv)
 			info->dataamont = datam;
 		}
 
-		pthread_create(&(info->tid),NULL,thread_jobs,(void *)info);
+		pthread_create(&(arrtid[i]),NULL,thread_jobs,(void *)info);
 	}
-
+	i = 0;
+   		int rate=0;//进度率 表示进度走的百分比
+   		char bar[102]={0};//初始化进度条大小 0-100应给101个 我们把最后一个设为空
+  	 	const char *sta="-\\|/";看进度条是否卡顿还是在工作
+	while(ncount--)
+	{
+		pthread_join(arrtid[i],NULL);
+		i++;
+		rate = 100\ncount;
+	   	printf("[%-100s],%d%%,[%c]\r",bar,rate,sta[rate%4]);
+	   	bar[rate]='*';
+	   	rate++;
+	   	bar[rate]='\0';
+	}
 	while(1)
 		sleep(1);
 
